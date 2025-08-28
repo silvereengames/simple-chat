@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <h1>Simple chat</h1>
+    <p>Create or join a room</p>
+    <button onclick="createRoom()">Create room</button>
+    <br>
+    <input id="roomcode" placeholder="Room code">
+    <button onclick="joinRoom()">Join</button>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        function createRoom() {
+            socket.emit('createRoom')
+        }
+
+        socket.on('joinRoom', (e) => {
+            window.location.replace(`/room/${e}`)
+        })
+
+        function joinRoom() {
+            socket.emit('requestjoin', document.getElementById('roomcode').value);
+        }
+    </script>
+</body>
+</html>

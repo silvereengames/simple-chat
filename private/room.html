@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <h1 id="header">You are in room:</h1>
+    <div id="messages">
+    <input id="username" placeholder="username">
+    <input id="message" placeholder="Send message...">
+    <button onclick="sendMessage()">Send message</button>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const path = window.location.pathname;
+        const parts = path.split('/');
+        const roomId = parts[2];
+        const socket = io();
+
+        function addMessage(message) {
+            const messagebox = document.createElement('p');
+            messagebox.innerHTML = message;
+            document.getElementById('messages').appendChild(messagebox);
+        }
+
+        socket.on('updatemessage', ({username, message}) => {
+            addMessage(`${username}: ${message}`)
+            console.log("message recived"+message)
+        })
+
+        function sendMessage() {
+            const username = document.getElementById('username').value;
+            const message = document.getElementById('message').value;
+
+            socket.emit('sendmessage', {
+                "username": username,
+                "message": message,
+                "roomcode": roomId
+            })
+            console.log("message sent")
+        }
+
+        socket.emit('joinRoom', roomId);
+
+        document.getElementById('header').innerHTML = `You are in room: ${roomId}`;
+    </script>
+</body>
+</html>
